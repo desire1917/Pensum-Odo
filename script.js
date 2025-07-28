@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Definición de la estructura de la malla curricular con sus requisitos
+    // Cada asignatura tiene un 'id' único, un 'name' para mostrar y 'prereqs' (un array de IDs de las asignaturas requeridas)
     const curriculum = {
         'Primer Semestre': [
             { id: 'biologia-basica', name: 'Biología Básica', prereqs: [] },
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'odontopediatria-ii', name: 'Odontopediatría II', prereqs: ['odontopediatria-i', 'clinica-ll'] },
             { id: 'terapia-pulpar-ii', name: 'Terapia Pulpar II', prereqs: ['terapia-pulpar-i', 'clinica-ll'] },
             { id: 'cirugia-dentomaxilar-ii', name: 'Cirugía Dentomaxilar II', prereqs: ['cirugia-dentomaxilar-i', 'clinica-ll'] },
-            { id: 'clinica-iii', name: 'Clínica III', prereqs: ['clinica-ll', 'patologia-bucal', 'terapia-pulpar-i', 'cirugia-dentomaxilar-i'] },
+            { id: 'clinica-iii', name: 'Clínica III', prereqs: ['clinica-ll', 'patologia-bucal', 'terapia-pulpar-i', 'cirugia-dentomaxilar-i'] }, // Aquí se agregaron más prerequisitos para Clínica III
             { id: 'terapia-periodontal-i', name: 'Terapia Periodontal I', prereqs: ['procesos-periodontales', 'clinica-ll'] },
             { id: 'rehabilitacion-fija-i', name: 'Rehabilitación Fija I', prereqs: ['fisiopatologia-de-la-oclusion', 'biomateriales-y-restaurad-ii'] },
             { id: 'rehabilitacion-movible-i', name: 'Rehabilitación Movible I', prereqs: ['fisiopatologia-de-la-oclusion', 'biomateriales-y-restaurad-ii'] },
@@ -89,8 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'seminarios-de-integracion', name: 'Seminarios De Integración', prereqs: ['seminarios-de-investigacion'] },
             { id: 'asignatura-optativa', name: 'Asignatura Optativa', prereqs: ['clinica-v'] }
         ],
-        'Asignaturas Especiales': [ // Moved these here as they seem like electives/specialties, not core 10th semester
-            { id: 'introduccion-a-la-informatica', name: 'Introducción A La Informática', prereqs: [] },
+        // Las asignaturas adicionales que parecían de "Décimo Semestre" y "Tesis de Grado"
+        // se han separado para una mejor organización, ya que algunas son opcionales o de especialización.
+        // Si deben ser parte del Décimo Semestre regular, se pueden mover.
+        'Asignaturas Especiales/Optativas': [
+            { id: 'introduccion-a-la-informatica', name: 'Introducción A La Informática', prereqs: [] }, // Posiblemente una optativa temprana
             { id: 'manif-bucales-enferm-sistemat', name: 'Manif Bucales Enferm Sistemat', prereqs: ['princ-medicina-int-y-urgen-med'] },
             { id: 'terapia-lesiones-endoperiodont', name: 'Terapia Lesiones Endoperiodont', prereqs: ['terapia-pulpar-ii', 'terapia-periodontal-ii'] },
             { id: 'atencion-al-nino-minusvalido', name: 'Atención Al Niño Minusválido', prereqs: ['odontopediatria-ii'] },
@@ -103,15 +107,24 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     };
 
+    // Recupera las asignaturas aprobadas del almacenamiento local del navegador
+    // Si no hay datos, inicializa un Set vacío.
     const approvedCourses = new Set(JSON.parse(localStorage.getItem('approvedCourses')) || []);
+    
+    // Obtiene referencias a los elementos del DOM
     const curriculumGrid = document.getElementById('curriculum-grid');
     const modal = document.getElementById('modal');
     const modalMessage = document.getElementById('modal-message');
     const closeButton = document.querySelector('.close-button');
 
-    // Function to render the curriculum
+    /**
+     * Renderiza (dibuja) toda la malla curricular en la página.
+     * Itera sobre los semestres y asignaturas para crear los elementos HTML,
+     * aplicando las clases 'approved' o 'blocked' según el estado.
+     */
     function renderCurriculum() {
-        curriculumGrid.innerHTML = ''; // Clear existing content
+        curriculumGrid.innerHTML = ''; // Limpia cualquier contenido existente antes de redibujar
+
         for (const semesterName in curriculum) {
             const semesterDiv = document.createElement('div');
             semesterDiv.classList.add('semester');
@@ -120,20 +133,21 @@ document.addEventListener('DOMContentLoaded', () => {
             curriculum[semesterName].forEach(course => {
                 const courseDiv = document.createElement('div');
                 courseDiv.classList.add('course');
-                courseDiv.dataset.id = course.id;
+                courseDiv.dataset.id = course.id; // Guarda el ID de la asignatura en un atributo de datos
                 courseDiv.textContent = course.name;
 
-                // Check if the course is approved
+                // Verifica si la asignatura ya está aprobada
                 if (approvedCourses.has(course.id)) {
                     courseDiv.classList.add('approved');
                 } else {
-                    // Check if the course is blocked
+                    // Si no está aprobada, verifica si está bloqueada por prerrequisitos
                     const isBlocked = course.prereqs.some(prereq => !approvedCourses.has(prereq));
                     if (isBlocked) {
                         courseDiv.classList.add('blocked');
                     }
                 }
 
+                // Agrega el evento de clic a cada asignatura
                 courseDiv.addEventListener('click', () => toggleCourseStatus(course));
                 semesterDiv.appendChild(courseDiv);
             });
@@ -141,48 +155,52 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to toggle course status (approved/blocked)
+    /**
+     * Cambia el estado de una asignatura (aprobado/bloqueado) cuando se hace clic.
+     * @param {object} course - El objeto de la asignatura (con id, name, prereqs).
+     */
     function toggleCourseStatus(course) {
-        const courseElement = document.querySelector(`[data-id="${course.id}"]`);
-
+        // Si la asignatura ya está aprobada, no hacemos nada más al hacer clic.
         if (approvedCourses.has(course.id)) {
-            // If already approved, do nothing (or allow unapproving if desired, but not in requirements)
             return;
         }
 
+        // Encuentra los prerrequisitos que faltan por aprobar
         const missingPrereqs = course.prereqs.filter(prereq => !approvedCourses.has(prereq));
 
         if (missingPrereqs.length === 0) {
-            // Approve the course
-            approvedCourses.add(course.id);
+            // Si no hay prerrequisitos faltantes, la asignatura se puede aprobar
+            approvedCourses.add(course.id); // Agrega el ID al Set de aprobados
+            // Guarda el estado actualizado en localStorage
             localStorage.setItem('approvedCourses', JSON.stringify(Array.from(approvedCourses)));
-            renderCurriculum(); // Re-render to update statuses
+            renderCurriculum(); // Vuelve a renderizar la malla para actualizar el estado visual
         } else {
-            // Show modal with missing prerequisites
+            // Si faltan prerrequisitos, muestra el modal con el mensaje
             const missingNames = missingPrereqs.map(id => {
-                // Find the course name for the missing ID
+                // Busca el nombre de la asignatura faltante para mostrarlo en el mensaje
                 for (const sem in curriculum) {
                     const found = curriculum[sem].find(c => c.id === id);
                     if (found) return found.name;
                 }
-                return id; // Fallback if name not found
+                return id; // En caso de no encontrar el nombre (debería ser raro)
             });
             modalMessage.innerHTML = `No puedes aprobar "${course.name}" aún.<br><br>Primero debes aprobar las siguientes asignaturas:<br><ul>${missingNames.map(name => `<li>${name}</li>`).join('')}</ul>`;
-            modal.style.display = 'flex';
+            modal.style.display = 'flex'; // Muestra el modal
         }
     }
 
-    // Close modal when clicking on the close button or outside the modal
+    // Eventos para cerrar el modal
     closeButton.addEventListener('click', () => {
         modal.style.display = 'none';
     });
 
+    // Cierra el modal si se hace clic fuera de su contenido
     window.addEventListener('click', (event) => {
         if (event.target === modal) {
             modal.style.display = 'none';
         }
     });
 
-    // Initial render when the page loads
+    // Renderiza la malla curricular cuando la página se carga por primera vez
     renderCurriculum();
 });
