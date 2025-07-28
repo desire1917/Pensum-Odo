@@ -1,11 +1,11 @@
 :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --approved-color: #27ae60;
-    --blocked-color: #e74c3c;
-    --text-color: #ecf0f1;
-    --card-bg: #34495e;
-    --hover-bg: #4a6684;
+    --primary-color: #311b92; /* Un morado oscuro para el fondo general, que combina bien con rosados */
+    --secondary-color: #e91e63; /* Rosa vibrante para acentos y títulos */
+    --approved-color: #4caf50; /* Verde brillante para asignaturas aprobadas (contraste) */
+    --blocked-color: #f44336; /* Rojo para asignaturas bloqueadas (claro y contrastante) */
+    --text-color: #fce4ec; /* Color de texto muy claro, casi blanco rosado */
+    --card-bg: #880e4f; /* Fondo de las tarjetas de semestre (morado-rosado oscuro) */
+    --hover-bg: #c2185b; /* Color al pasar el mouse por las asignaturas (rosa más oscuro) */
 }
 
 body {
@@ -41,7 +41,7 @@ p {
     padding: 30px;
     max-width: 1300px;
     margin: 30px auto;
-    background-color: var(--primary-color);
+    background-color: var(--primary-color); /* Mantiene el color base, pero puedes cambiarlo si quieres */
     border-radius: 10px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
@@ -69,7 +69,7 @@ p {
 }
 
 .course {
-    background-color: var(--primary-color);
+    background-color: var(--primary-color); /* Un tono más oscuro para las tarjetas de curso */
     color: var(--text-color);
     padding: 15px;
     margin-bottom: 12px;
@@ -77,7 +77,7 @@ p {
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-    word-wrap: break-word; /* Ensure long course names wrap */
+    word-wrap: break-word;
 }
 
 .course:last-child {
@@ -139,7 +139,7 @@ p {
     width: 80%;
     max-width: 500px;
     text-align: center;
-    color: var(--primary-color);
+    color: var(--primary-color); /* El texto del modal puede ser del color primario o un gris oscuro */
     position: relative;
     animation: fadeIn 0.3s ease-out;
 }
