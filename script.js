@@ -1,206 +1,230 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Definición de la estructura de la malla curricular con sus requisitos
-    // Cada asignatura tiene un 'id' único, un 'name' para mostrar y 'prereqs' (un array de IDs de las asignaturas requeridas)
-    const curriculum = {
-        'Primer Semestre': [
-            { id: 'biologia-basica', name: 'Biología Básica', prereqs: [] },
-            { id: 'orientacion-institucional', name: 'Orientación Institucional', prereqs: [] },
-            { id: 'int-a-la-filosofia', name: 'Int A La Filosofía', prereqs: [] },
-            { id: 'fisica-basica', name: 'Física Básica', prereqs: [] },
-            { id: 'lengua-espanola-basica-i', name: 'Lengua Española Básica I', prereqs: [] },
-            { id: 'matematica-basica', name: 'Matemática Básica', prereqs: [] },
-            { id: 'quimica-basica', name: 'Química Básica', prereqs: [] },
-            { id: 'int-a-las-ciencias-sociales', name: 'Int A Las Ciencias Sociales', prereqs: [] }
+    // Definición de la estructura del pensum con requisitos
+    const pensum = {
+        "Primer Semestre": [
+            { name: "Biología Básica", id: "biologia-basica" },
+            { name: "Orientación Institucional", id: "orientacion-institucional" },
+            { name: "Int A La Filosofía", id: "int-a-filosofia" },
+            { name: "Física Básica", id: "fisica-basica" },
+            { name: "Lengua Española Básica I", id: "lengua-espanola-basica-i" },
+            { name: "Matemática Básica", id: "matematica-basica" },
+            { name: "Química Básica", id: "quimica-basica" },
+            { name: "Int A Las Ciencias Sociales", id: "int-a-ciencias-sociales" }
         ],
-        'Segundo Semestre': [
-            { id: 'morfofuncion', name: 'Morfofunción', prereqs: ['biologia-basica'] },
-            { id: 'educacion-fisica', name: 'Educación Física', prereqs: [] },
-            { id: 'fund-de-his-social-dominicana', name: 'Fund De His Social Dominicana', prereqs: ['int-a-las-ciencias-sociales'] },
-            { id: 'lengua-espanola-basica-ii', name: 'Lengua Española Básica II', prereqs: ['lengua-espanola-basica-i'] },
-            { id: 'salud-y-conducta-humanas', name: 'Salud Y Conducta Humanas', prereqs: ['int-a-la-filosofia'] },
-            { id: 'quimica-organica', name: 'Química Orgánica', prereqs: ['quimica-basica'] },
-            { id: 'salud-y-sociedad-i', name: 'Salud Y Sociedad I', prereqs: ['int-a-las-ciencias-sociales'] },
-            { id: 'int-a-la-metod-invest-en-salud', name: 'Int A La Metod Invest En Salud', prereqs: ['int-a-las-ciencias-sociales'] }
+        "Segundo Semestre": [
+            { name: "Morfofunción", id: "morfofuncion", requires: ["biologia-basica"] },
+            { name: "Educación Física", id: "educacion-fisica" },
+            { name: "Fund De His Social Dominicana", id: "fund-his-social-dominicana" },
+            { name: "Lengua Española Básica II", id: "lengua-espanola-basica-ii", requires: ["lengua-espanola-basica-i"] },
+            { name: "Salud Y Conducta Humanas", id: "salud-y-conducta-humanas", requires: ["int-a-ciencias-sociales"] },
+            { name: "Química Orgánica", id: "quimica-organica", requires: ["quimica-basica"] },
+            { name: "Salud Y Sociedad I", id: "salud-y-sociedad-i", requires: ["int-a-ciencias-sociales"] },
+            { name: "Int A La Metod Invest En Salud", id: "int-a-metod-invest-salud" }
         ],
-        'Tercer Semestre': [
-            { id: 'proc-bioquimicos-del-org-l', name: 'Proc Bioquímicos Del Org l', prereqs: ['quimica-organica', 'morfofuncion'] },
-            { id: 'anatomia-y-fisiologia-grales', name: 'Anatomía Y Fisiología Grales', prereqs: ['morfofuncion'] },
-            { id: 'microbiologia-general', name: 'Microbiología General', prereqs: ['biologia-basica'] },
-            { id: 'int-al-est-de-la-odontologia', name: 'Int Al Est De La Odontología', prereqs: ['salud-y-sociedad-i'] },
-            { id: 'salud-y-sociedad-ii', name: 'Salud Y Sociedad II', prereqs: ['salud-y-sociedad-i'] },
-            { id: 'epidemiologia-general', name: 'Epidemiología General', prereqs: ['int-a-la-metod-invest-en-salud'] }
+        "Tercer Semestre": [
+            { name: "Proc Bioquímicos Del Org l", id: "proc-bioquimicos-org-i", requires: ["quimica-organica", "morfofuncion"] },
+            { name: "Anatomía Y Fisiología Grales", id: "anatomia-fisiologia-grales", requires: ["morfofuncion"] },
+            { name: "Microbiología General", id: "microbiologia-general", requires: ["biologia-basica"] },
+            { name: "Int Al Est De La Odontología", id: "int-est-odontologia", requires: ["salud-y-sociedad-i"] },
+            { name: "Salud Y Sociedad II", id: "salud-y-sociedad-ii", requires: ["salud-y-sociedad-i"] },
+            { name: "Epidemiología General", id: "epidemiologia-general", requires: ["int-a-metod-invest-salud"] }
         ],
-        'Cuarto Semestre': [
-            { id: 'proc-bioquimicos-del-org-ii', name: 'Proc Bioquímicos Del Org II', prereqs: ['proc-bioquimicos-del-org-l'] },
-            { id: 'procesos-patologicos', name: 'Procesos Patológicos', prereqs: ['anatomia-y-fisiologia-grales', 'microbiologia-general'] },
-            { id: 'his-anat-fisio-cabeza-y-cuello', name: 'His Anat Fisio Cabeza Y Cuello', prereqs: ['anatomia-y-fisiologia-grales'] },
-            { id: 'microbiologia-bucodental', name: 'Microbiología Bucodental', prereqs: ['microbiologia-general'] },
-            { id: 'anatomia-y-fisio-bucodentales', name: 'Anatomía Y Fisio Bucodentales', prereqs: ['anatomia-y-fisiologia-grales'] },
-            { id: 'crecimiento-y-des-bucodental', name: 'Crecimiento Y Des Bucodental', prereqs: ['int-al-est-de-la-odontologia'] },
-            { id: 'epidemiologia-bucodental', name: 'Epidemiología Bucodental', prereqs: ['epidemiologia-general'] },
-            { id: 'procesos-periodontales', name: 'Procesos Periodontales', prereqs: ['anatomia-y-fisio-bucodentales'] }
+        "Cuarto Semestre": [
+            { name: "Proc Bioquímicos Del Org II", id: "proc-bioquimicos-org-ii", requires: ["proc-bioquimicos-org-i"] },
+            { name: "Procesos Patológicos", id: "procesos-patologicos", requires: ["anatomia-fisiologia-grales", "microbiologia-general"] },
+            { name: "His Anat Fisio Cabeza Y Cuello", id: "his-anat-fisio-cabeza-cuello", requires: ["anatomia-fisiologia-grales"] },
+            { name: "Microbiología Bucodental", id: "microbiologia-bucodental", requires: ["microbiologia-general"] },
+            { name: "Anatomía Y Fisio Bucodentales", id: "anatomia-fisio-bucodentales", requires: ["anatomia-fisiologia-grales"] },
+            { name: "Crecimiento Y Des Bucodental", id: "crecimiento-des-bucodental", requires: ["int-est-odontologia"] },
+            { name: "Epidemiología Bucodental", id: "epidemiologia-bucodental", requires: ["epidemiologia-general"] },
+            { name: "Procesos Periodontales", id: "procesos-periodontales", requires: ["int-est-odontologia", "procesos-patologicos"] }
         ],
-        'Quinto Semestre': [
-            { id: 'farmacologia', name: 'Farmacología', prereqs: ['proc-bioquimicos-del-org-ii'] },
-            { id: 'princ-basic-de-anestesiologia', name: 'Princ Basic De Anestesiología', prereqs: ['procesos-patologicos'] },
-            { id: 'educ-y-prevencion-bucodental', name: 'Educ Y Prevención Bucodental', prereqs: ['epidemiologia-bucodental'] },
-            { id: 'diagnostico-clinico-y-radiolog', name: 'Diagnóstico Clínico Y Radiolog', prereqs: ['his-anat-fisio-cabeza-y-cuello', 'anatomia-y-fisio-bucodentales'] },
-            { id: 'biomateriales-y-restaurad-i', name: 'Biomateriales Y Restaurad I', prereqs: ['quimica-organica', 'fisica-basica'] },
-            { id: 'fisiopatologia-de-la-oclusion', name: 'Fisiopatología De La Oclusión', prereqs: ['anatomia-y-fisio-bucodentales', 'crecimiento-y-des-bucodental'] },
-            { id: 'clinica-l', name: 'Clínica l', prereqs: ['diagnostico-clinico-y-radiolog'] }
+        "Quinto Semestre": [
+            { name: "Farmacología", id: "farmacologia", requires: ["proc-bioquimicos-org-ii"] },
+            { name: "Princ Basic De Anestesiología", id: "princ-basic-anestesiologia", requires: ["proc-bioquimicos-org-ii"] },
+            { name: "Educ Y Prevención Bucodental", id: "educ-prevencion-bucodental", requires: ["epidemiologia-bucodental"] },
+            { name: "Diagnóstico Clínico Y Radiolog", id: "diagnostico-clinico-radiolog", requires: ["his-anat-fisio-cabeza-cuello", "procesos-patologicos", "microbiologia-bucodental"] },
+            { name: "Biomateriales Y Restaurad I", id: "biomateriales-restaurad-i", requires: ["quimica-organica"] }, // Asumiendo, ajustar si hay otros
+            { name: "Fisiopatología De La Oclusión", id: "fisiopatologia-oclusion", requires: ["anatomia-fisio-bucodentales"] },
+            { name: "Clínica l", id: "clinica-i", requires: ["diagnostico-clinico-radiolog", "procesos-periodontales", "biomateriales-restaurad-i"] }
         ],
-        'Sexto Semestre': [
-            { id: 'anatomia-patologica', name: 'Anatomía Patológica', prereqs: ['procesos-patologicos'] },
-            { id: 'patologia-bucal', name: 'Patología Bucal', prereqs: ['anatomia-patologica', 'microbiologia-bucodental'] },
-            { id: 'odontopediatria-i', name: 'Odontopediatría I', prereqs: ['crecimiento-y-des-bucodental', 'educ-y-prevencion-bucodental'] },
-            { id: 'biomateriales-y-restaurad-ii', name: 'Biomateriales Y Restaurad II', prereqs: ['biomateriales-y-restaurad-i'] },
-            { id: 'terapia-pulpar-i', name: 'Terapia Pulpar I', prereqs: ['diagnostico-clinico-y-radiolog'] },
-            { id: 'cirugia-dentomaxilar-i', name: 'Cirugía Dentomaxilar I', prereqs: ['princ-basic-de-anestesiologia'] },
-            { id: 'servicios-comunitarios-i', name: 'Servicios Comunitarios I', prereqs: ['salud-y-sociedad-ii'] },
-            { id: 'clinica-ll', name: 'Clínica ll', prereqs: ['clinica-l', 'biomateriales-y-restaurad-i'] }
+        "Sexto Semestre": [
+            { name: "Anatomía Patológica", id: "anatomia-patologica", requires: ["procesos-patologicos"] },
+            { name: "Patología Bucal", id: "patologia-bucal", requires: ["anatomia-patologica", "microbiologia-bucodental"] },
+            { name: "Odontopediatría I", id: "odontopediatria-i", requires: ["crecimiento-des-bucodental", "diagnostico-clinico-radiolog"] },
+            { name: "Biomateriales Y Restaurad II", id: "biomateriales-restaurad-ii", requires: ["biomateriales-restaurad-i", "clinica-i"] },
+            { name: "Terapia Pulpar I", id: "terapia-pulpar-i", requires: ["diagnostico-clinico-radiolog"] },
+            { name: "Cirugía Dentomaxilar I", id: "cirugia-dentomaxilar-i", requires: ["his-anat-fisio-cabeza-cuello", "princ-basic-anestesiologia"] },
+            { name: "Servicios Comunitarios I", id: "servicios-comunitarios-i", requires: ["salud-y-sociedad-ii"] },
+            { name: "Clínica ll", id: "clinica-ii", requires: ["clinica-i", "biomateriales-restaurad-ii", "terapia-pulpar-i", "cirugia-dentomaxilar-i"] }
         ],
-        'Séptimo Semestre': [
-            { id: 'odontopediatria-ii', name: 'Odontopediatría II', prereqs: ['odontopediatria-i', 'clinica-ll'] },
-            { id: 'terapia-pulpar-ii', name: 'Terapia Pulpar II', prereqs: ['terapia-pulpar-i', 'clinica-ll'] },
-            { id: 'cirugia-dentomaxilar-ii', name: 'Cirugía Dentomaxilar II', prereqs: ['cirugia-dentomaxilar-i', 'clinica-ll'] },
-            { id: 'clinica-iii', name: 'Clínica III', prereqs: ['clinica-ll', 'patologia-bucal', 'terapia-pulpar-i', 'cirugia-dentomaxilar-i'] }, // Aquí se agregaron más prerequisitos para Clínica III
-            { id: 'terapia-periodontal-i', name: 'Terapia Periodontal I', prereqs: ['procesos-periodontales', 'clinica-ll'] },
-            { id: 'rehabilitacion-fija-i', name: 'Rehabilitación Fija I', prereqs: ['fisiopatologia-de-la-oclusion', 'biomateriales-y-restaurad-ii'] },
-            { id: 'rehabilitacion-movible-i', name: 'Rehabilitación Movible I', prereqs: ['fisiopatologia-de-la-oclusion', 'biomateriales-y-restaurad-ii'] },
-            { id: 'planif-y-adm-de-ser-de-salud', name: 'Planif Y Adm De Ser De Salud', prereqs: ['servicios-comunitarios-i'] }
+        "Séptimo Semestre": [
+            { name: "Odontopediatría II", id: "odontopediatria-ii", requires: ["odontopediatria-i", "clinica-ii"] },
+            { name: "Terapia Pulpar II", id: "terapia-pulpar-ii", requires: ["terapia-pulpar-i", "clinica-ii"] },
+            { name: "Cirugía Dentomaxilar II", id: "cirugia-dentomaxilar-ii", requires: ["cirugia-dentomaxilar-i", "clinica-ii"] },
+            { name: "Clínica III", id: "clinica-iii", requires: ["clinica-ii", "odontopediatria-ii", "terapia-pulpar-ii", "cirugia-dentomaxilar-ii"] },
+            { name: "Terapia Periodontal I", id: "terapia-periodontal-i", requires: ["procesos-periodontales", "clinica-ii"] },
+            { name: "Rehabilitación Fija I", id: "rehabilitacion-fija-i", requires: ["fisiopatologia-oclusion", "biomateriales-restaurad-ii", "clinica-ii"] },
+            { name: "Rehabilitación Movible I", id: "rehabilitacion-movible-i", requires: ["fisiopatologia-oclusion", "biomateriales-restaurad-ii", "clinica-ii"] },
+            { name: "Planif Y Adm De Ser De Salud", id: "planif-adm-ser-salud", requires: ["servicios-comunitarios-i"] }
         ],
-        'Octavo Semestre': [
-            { id: 'princ-medicina-int-y-urgen-med', name: 'Princ Medicina Int Y Urgen Med', prereqs: ['farmacologia', 'procesos-patologicos'] },
-            { id: 'ortodoncia-y-ortopedia-i', name: 'Ortodoncia Y Ortopedia I', prereqs: ['crecimiento-y-des-bucodental', 'fisiopatologia-de-la-oclusion'] },
-            { id: 'terapia-periodontal-ii', name: 'Terapia Periodontal II', prereqs: ['terapia-periodontal-i', 'clinica-iii'] },
-            { id: 'rehabilitacion-fija-ii', name: 'Rehabilitación Fija II', prereqs: ['rehabilitacion-fija-i', 'clinica-iii'] },
-            { id: 'rehabilitacion-movible-ii', name: 'Rehabilitación Movible II', prereqs: ['rehabilitacion-movible-i', 'clinica-iii'] },
-            { id: 'clinica-iv', name: 'Clínica IV', prereqs: ['clinica-iii', 'odontopediatria-ii', 'terapia-pulpar-ii', 'cirugia-dentomaxilar-ii', 'terapia-periodontal-i', 'rehabilitacion-fija-i', 'rehabilitacion-movible-i'] },
-            { id: 'seminarios-de-investigacion', name: 'Seminarios De Investigación', prereqs: ['int-a-la-metod-invest-en-salud'] }
+        "Octavo Semestre": [
+            { name: "Princ Medicina Int Y Urgen Med", id: "princ-medicina-int-urgen-med", requires: ["farmacologia", "patologia-bucal"] },
+            { name: "Ortodoncia Y Ortopedia I", id: "ortodoncia-ortopedia-i", requires: ["crecimiento-des-bucodental", "diagnostico-clinico-radiolog"] },
+            { name: "Terapia Periodontal II", id: "terapia-periodontal-ii", requires: ["terapia-periodontal-i", "clinica-iii"] },
+            { name: "Rehabilitación Fija II", id: "rehabilitacion-fija-ii", requires: ["rehabilitacion-fija-i", "clinica-iii"] },
+            { name: "Rehabilitación Movible II", id: "rehabilitacion-movible-ii", requires: ["rehabilitacion-movible-i", "clinica-iii"] },
+            { name: "Clínica IV", id: "clinica-iv", requires: ["clinica-iii", "terapia-periodontal-ii", "rehabilitacion-fija-ii", "rehabilitacion-movible-ii"] },
+            { name: "Seminarios De Investigación", id: "seminarios-investigacion", requires: ["int-a-metod-invest-salud"] }
         ],
-        'Noveno Semestre': [
-            { id: 'ortodoncia-y-ortopedia-ll', name: 'Ortodoncia Y Ortopedia ll', prereqs: ['ortodoncia-y-ortopedia-i', 'clinica-iv'] },
-            { id: 'servicios-comunitarios-ii', name: 'Servicios Comunitarios II', prereqs: ['servicios-comunitarios-i', 'clinica-iv'] },
-            { id: 'etica-prof-y-odontologia-foren', name: 'Ética Prof Y Odontología Foren', prereqs: ['salud-y-conducta-humanas'] },
-            { id: 'clinica-v', name: 'Clínica V', prereqs: ['clinica-iv', 'ortodoncia-y-ortopedia-i', 'terapia-periodontal-ii', 'rehabilitacion-fija-ii', 'rehabilitacion-movible-ii'] }
+        "Noveno Semestre": [
+            { name: "Ortodoncia Y Ortopedia ll", id: "ortodoncia-ortopedia-ii", requires: ["ortodoncia-ortopedia-i", "clinica-iv"] },
+            { name: "Servicios Comunitarios II", id: "servicios-comunitarios-ii", requires: ["servicios-comunitarios-i"] },
+            { name: "Ética Prof Y Odontología Foren", id: "etica-prof-odontologia-foren", requires: ["int-a-filosofia", "salud-y-conducta-humanas"] },
+            { name: "Clínica V", id: "clinica-v", requires: ["clinica-iv", "ortodoncia-ortopedia-ii"] }
         ],
-        'Décimo Semestre': [
-            { id: 'servicios-comunitarios-iii', name: 'Servicios Comunitarios III', prereqs: ['servicios-comunitarios-ii', 'clinica-v'] },
-            { id: 'clinica-vi', name: 'Clínica VI', prereqs: ['clinica-v'] },
-            { id: 'seminarios-de-integracion', name: 'Seminarios De Integración', prereqs: ['seminarios-de-investigacion'] },
-            { id: 'asignatura-optativa', name: 'Asignatura Optativa', prereqs: ['clinica-v'] }
+        "Décimo Semestre (Troncal)": [ // Renombrado para diferenciar de las optativas
+            { name: "Servicios Comunitarios III", id: "servicios-comunitarios-iii", requires: ["servicios-comunitarios-ii"] },
+            { name: "Clínica VI", id: "clinica-vi", requires: ["clinica-v"] },
+            { name: "Seminarios De Integración", id: "seminarios-integracion", requires: ["seminarios-investigacion"] },
+            { name: "Asignatura Optativa", id: "asignatura-optativa", requires: ["clinica-vi"] } // Requisito general para tomar optativa
         ],
-        // Las asignaturas adicionales que parecían de "Décimo Semestre" y "Tesis de Grado"
-        // se han separado para una mejor organización, ya que algunas son opcionales o de especialización.
-        // Si deben ser parte del Décimo Semestre regular, se pueden mover.
-        'Asignaturas Especiales/Optativas': [
-            { id: 'introduccion-a-la-informatica', name: 'Introducción A La Informática', prereqs: [] }, // Posiblemente una optativa temprana
-            { id: 'manif-bucales-enferm-sistemat', name: 'Manif Bucales Enferm Sistemat', prereqs: ['princ-medicina-int-y-urgen-med'] },
-            { id: 'terapia-lesiones-endoperiodont', name: 'Terapia Lesiones Endoperiodont', prereqs: ['terapia-pulpar-ii', 'terapia-periodontal-ii'] },
-            { id: 'atencion-al-nino-minusvalido', name: 'Atención Al Niño Minusválido', prereqs: ['odontopediatria-ii'] },
-            { id: 'cirugia-protesica', name: 'Cirugía Protésica', prereqs: ['cirugia-dentomaxilar-ii', 'rehabilitacion-fija-ii', 'rehabilitacion-movible-ii'] },
-            { id: 'terapia-disfunc-artic-temp-man', name: 'Terapia Disfunc Artic Temp-Man', prereqs: ['fisiopatologia-de-la-oclusion'] },
-            { id: 'rehabilitacion-e-implantes', name: 'Rehabilitación E Implantes', prereqs: ['rehabilitacion-fija-ii', 'cirugia-dentomaxilar-ii'] }
+        "Tesis de Grado": [
+            { name: "Tesis De Grado O Curso Equival", id: "tesis-grado", requires: ["seminarios-integracion", "clinica-vi"] }
         ],
-        'Tesis de Grado': [
-            { id: 'tesis-de-grado-o-curso-equival', name: 'Tesis De Grado O Curso Equival', prereqs: ['seminarios-de-investigacion', 'clinica-vi', 'seminarios-de-integracion'] }
+        "Décimo Semestre (Electivas)": [ // Separado para mayor claridad
+            { name: "Introducción A La Informática", id: "introduccion-informatica" },
+            { name: "Manif Bucales Enferm Sistemat", id: "manif-bucales-enferm-sistemat", requires: ["patologia-bucal"] },
+            { name: "Terapia Lesiones Endoperiodont", id: "terapia-lesiones-endoperiodont", requires: ["terapia-pulpar-ii", "terapia-periodontal-ii"] },
+            { name: "Atención Al Niño Minusválido", id: "atencion-nino-minusvalido", requires: ["odontopediatria-ii"] },
+            { name: "Cirugía Protésica", id: "cirugia-protesica", requires: ["cirugia-dentomaxilar-ii", "rehabilitacion-fija-ii", "rehabilitacion-movible-ii"] },
+            { name: "Terapia Disfunc Artic Temp-Man", id: "terapia-disfunc-artic-temp-man", requires: ["fisiopatologia-oclusion"] },
+            { name: "Rehabilitación E Implantes", id: "rehabilitacion-implantes", requires: ["rehabilitacion-fija-ii", "rehabilitacion-movible-ii"] }
         ]
     };
 
-    // Recupera las asignaturas aprobadas del almacenamiento local del navegador
-    // Si no hay datos, inicializa un Set vacío.
     const approvedCourses = new Set(JSON.parse(localStorage.getItem('approvedCourses')) || []);
-    
-    // Obtiene referencias a los elementos del DOM
-    const curriculumGrid = document.getElementById('curriculum-grid');
+    const pensumContainer = document.querySelector('.pensum-container');
     const modal = document.getElementById('modal');
-    const modalMessage = document.getElementById('modal-message');
     const closeButton = document.querySelector('.close-button');
+    const blockedCourseName = document.getElementById('blocked-course-name');
+    const requiredCoursesList = document.getElementById('required-courses-list');
 
-    /**
-     * Renderiza (dibuja) toda la malla curricular en la página.
-     * Itera sobre los semestres y asignaturas para crear los elementos HTML,
-     * aplicando las clases 'approved' o 'blocked' según el estado.
-     */
-    function renderCurriculum() {
-        curriculumGrid.innerHTML = ''; // Limpia cualquier contenido existente antes de redibujar
-
-        for (const semesterName in curriculum) {
+    // Función para renderizar el pensum
+    function renderPensum() {
+        pensumContainer.innerHTML = ''; // Limpiar el contenedor antes de renderizar
+        for (const semesterName in pensum) {
             const semesterDiv = document.createElement('div');
             semesterDiv.classList.add('semester');
-            semesterDiv.innerHTML = `<h2>${semesterName}</h2>`;
+            semesterDiv.innerHTML = `<h2>${semesterName}</h2><ul class="course-list"></ul>`;
+            const courseListUl = semesterDiv.querySelector('.course-list');
 
-            curriculum[semesterName].forEach(course => {
-                const courseDiv = document.createElement('div');
-                courseDiv.classList.add('course');
-                courseDiv.dataset.id = course.id; // Guarda el ID de la asignatura en un atributo de datos
-                courseDiv.textContent = course.name;
+            pensum[semesterName].forEach(course => {
+                const courseItemLi = document.createElement('li');
+                courseItemLi.classList.add('course-item');
+                courseItemLi.textContent = course.name;
+                courseItemLi.dataset.id = course.id;
 
-                // Verifica si la asignatura ya está aprobada
                 if (approvedCourses.has(course.id)) {
-                    courseDiv.classList.add('approved');
-                } else {
-                    // Si no está aprobada, verifica si está bloqueada por prerrequisitos
-                    const isBlocked = course.prereqs.some(prereq => !approvedCourses.has(prereq));
-                    if (isBlocked) {
-                        courseDiv.classList.add('blocked');
-                    }
+                    courseItemLi.classList.add('approved');
+                } else if (!canApprove(course.id)) {
+                    courseItemLi.classList.add('blocked');
                 }
 
-                // Agrega el evento de clic a cada asignatura
-                courseDiv.addEventListener('click', () => toggleCourseStatus(course));
-                semesterDiv.appendChild(courseDiv);
+                courseItemLi.addEventListener('click', () => handleCourseClick(course.id, course.name, course.requires));
+                courseListUl.appendChild(courseItemLi);
             });
-            curriculumGrid.appendChild(semesterDiv);
+            pensumContainer.appendChild(semesterDiv);
         }
     }
 
-    /**
-     * Cambia el estado de una asignatura (aprobado/bloqueado) cuando se hace clic.
-     * @param {object} course - El objeto de la asignatura (con id, name, prereqs).
-     */
-    function toggleCourseStatus(course) {
-        // Si la asignatura ya está aprobada, no hacemos nada más al hacer clic.
-        if (approvedCourses.has(course.id)) {
+    // Función para verificar si un curso puede ser aprobado (todos sus requisitos están aprobados)
+    function canApprove(courseId) {
+        // Encontrar el curso en el pensum
+        let course = null;
+        for (const semesterName in pensum) {
+            course = pensum[semesterName].find(c => c.id === courseId);
+            if (course) break;
+        }
+
+        if (!course || !course.requires) return true; // Si no tiene requisitos, siempre se puede aprobar
+
+        for (const requiredCourseId of course.requires) {
+            if (!approvedCourses.has(requiredCourseId)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Función para obtener los nombres de los requisitos no aprobados
+    function getMissingRequirements(courseId) {
+        let course = null;
+        for (const semesterName in pensum) {
+            course = pensum[semesterName].find(c => c.id === courseId);
+            if (course) break;
+        }
+
+        if (!course || !course.requires) return [];
+
+        const missing = [];
+        for (const requiredCourseId of course.requires) {
+            if (!approvedCourses.has(requiredCourseId)) {
+                // Encontrar el nombre de la materia requerida
+                let requiredCourseName = requiredCourseId; // Default a ID si no se encuentra
+                for (const semName in pensum) {
+                    const reqCourse = pensum[semName].find(c => c.id === requiredCourseId);
+                    if (reqCourse) {
+                        requiredCourseName = reqCourse.name;
+                        break;
+                    }
+                }
+                missing.push(requiredCourseName);
+            }
+        }
+        return missing;
+    }
+
+    // Manejar el clic en una materia
+    function handleCourseClick(courseId, courseName, requires) {
+        const courseElement = document.querySelector(`[data-id="${courseId}"]`);
+
+        if (approvedCourses.has(courseId)) {
+            // Ya aprobado, no hacer nada o permitir desaprobar si se desea (opcional)
             return;
         }
 
-        // Encuentra los prerrequisitos que faltan por aprobar
-        const missingPrereqs = course.prereqs.filter(prereq => !approvedCourses.has(prereq));
-
-        if (missingPrereqs.length === 0) {
-            // Si no hay prerrequisitos faltantes, la asignatura se puede aprobar
-            approvedCourses.add(course.id); // Agrega el ID al Set de aprobados
-            // Guarda el estado actualizado en localStorage
-            localStorage.setItem('approvedCourses', JSON.stringify(Array.from(approvedCourses)));
-            renderCurriculum(); // Vuelve a renderizar la malla para actualizar el estado visual
-        } else {
-            // Si faltan prerrequisitos, muestra el modal con el mensaje
-            const missingNames = missingPrereqs.map(id => {
-                // Busca el nombre de la asignatura faltante para mostrarlo en el mensaje
-                for (const sem in curriculum) {
-                    const found = curriculum[sem].find(c => c.id === id);
-                    if (found) return found.name;
-                }
-                return id; // En caso de no encontrar el nombre (debería ser raro)
+        if (courseElement.classList.contains('blocked')) {
+            const missing = getMissingRequirements(courseId);
+            blockedCourseName.textContent = courseName;
+            requiredCoursesList.innerHTML = '';
+            missing.forEach(req => {
+                const li = document.createElement('li');
+                li.textContent = req;
+                requiredCoursesList.appendChild(li);
             });
-            modalMessage.innerHTML = `No puedes aprobar "${course.name}" aún.<br><br>Primero debes aprobar las siguientes asignaturas:<br><ul>${missingNames.map(name => `<li>${name}</li>`).join('')}</ul>`;
-            modal.style.display = 'flex'; // Muestra el modal
+            modal.style.display = 'flex'; // Mostrar el modal
+            return;
+        }
+
+        if (canApprove(courseId)) {
+            approvedCourses.add(courseId);
+            localStorage.setItem('approvedCourses', JSON.stringify(Array.from(approvedCourses)));
+            renderPensum(); // Volver a renderizar para actualizar estados
         }
     }
 
-    // Eventos para cerrar el modal
+    // Cerrar el modal
     closeButton.addEventListener('click', () => {
         modal.style.display = 'none';
     });
 
-    // Cierra el modal si se hace clic fuera de su contenido
     window.addEventListener('click', (event) => {
-        if (event.target === modal) {
+        if (event.target == modal) {
             modal.style.display = 'none';
         }
     });
 
-    // Renderiza la malla curricular cuando la página se carga por primera vez
-    renderCurriculum();
+    // Renderizar el pensum al cargar la página
+    renderPensum();
 });
