@@ -3,22 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malla Curricular Interactiva</title>
+    <title>Pensum Curricular de Odontología</title>
     <link rel="stylesheet" href="estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
-        <h1>Malla Curricular de Odontología</h1>
-        <p>Haz clic en cada asignatura para marcarla como aprobada. ¡Asegúrate de cumplir con los requisitos!</p>
+        <h1>Pensum Curricular de Odontología</h1>
+        <p>Haz clic en las materias para marcarlas como aprobadas. ¡Los requisitos se validarán automáticamente!</p>
     </header>
-    <main id="curriculum-grid">
+
+    <main class="pensum-container">
         </main>
+
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <p id="modal-message"></p>
+            <h2>Materias Requeridas No Aprobadas</h2>
+            <p>Para aprobar "<span id="blocked-course-name"></span>", necesitas aprobar las siguientes materias primero:</p>
+            <ul id="required-courses-list"></ul>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
